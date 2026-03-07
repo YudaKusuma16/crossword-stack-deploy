@@ -29,26 +29,36 @@ async function ensureDatabase() {
 }
 
 // Configure CORS for multiple origins
+// CORS_ORIGIN supports comma-separated list: "https://a.vercel.app,https://b.vercel.app"
 const allowedOrigins = [
-  process.env.CORS_ORIGIN,
+  ...(process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
+    : []),
   'http://localhost:5173',
   'http://localhost:3000'
-].filter(Boolean)
+]
 
-// Middleware
-app.use(cors({
+const corsOptions = {
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, etc.)
+    // Allow requests with no origin (mobile apps, curl, Render health checks, etc.)
     if (!origin) return callback(null, true)
 
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+    if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
       callback(null, true)
     } else {
+      console.warn(`CORS blocked origin: "${origin}". Allowed: ${JSON.stringify(allowedOrigins)}`)
       callback(new Error('Not allowed by CORS'))
     }
   },
-  credentials: true
-}))
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+// Middleware
+app.use(cors(corsOptions))
+// Explicitly handle OPTIONS preflight for all routes
+app.options('*', cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -121,7 +131,7 @@ async function startServer() {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`)
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`)
-      console.log(`CORS origin: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`)
+      console.log(`CORS allowed origins: ${JSON.stringify(allowedOrigins)}`)
     })
   } catch (error) {
     console.error('Failed to start server:', error)
