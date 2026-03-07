@@ -1,0 +1,19 @@
+services:
+  # Backend API Service (Express.js)
+  - type: web
+    name: crossword-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+    healthCheckPath: /health
+    autoDeploy: true
+
+databases:
+  # MySQL Database on Clever Cloud (not Render)
+  # Use Clever Cloud for MySQL database deployment
+  # See DEPLOYMENT.md for details
