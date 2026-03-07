@@ -32,7 +32,7 @@ async function ensureDatabase() {
 // CORS_ORIGIN supports comma-separated list: "https://a.vercel.app,https://b.vercel.app"
 const allowedOrigins = [
   ...(process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
+    ? process.env.CORS_ORIGIN.split(',').map(o => o.trim().replace(/\/$/, '')).filter(Boolean)
     : []),
   'http://localhost:5173',
   'http://localhost:3000'
