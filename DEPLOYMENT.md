@@ -180,9 +180,10 @@ After creating the project, add environment variable:
 
 | Variable | Value |
 |----------|-------|
-| `VITE_API_URL` | Your Render backend URL |
+| `VITE_API_URL` | Your Render backend URL with `/api` suffix |
 
-Example: `VITE_API_URL=https://crossword-backend.onrender.com`
+**IMPORTANT:** Include `/api` at the end of the URL!
+- Example: `VITE_API_URL=https://crossword-backend.onrender.com/api`
 
 1. Go to **Settings** → **Environment Variables**
 2. Add the variable
@@ -278,7 +279,8 @@ CORS_ORIGIN=https://your-frontend.vercel.app
 
 #### Vercel (Frontend)
 ```bash
-VITE_API_URL=https://your-backend.onrender.com
+# IMPORTANT: Include /api at the end!
+VITE_API_URL=https://your-backend.onrender.com/api
 ```
 
 ---

@@ -77,7 +77,8 @@ CORS_ORIGIN=https://your-frontend.vercel.app
 
 ### Environment Variable
 ```bash
-VITE_API_URL=https://your-backend.onrender.com
+# IMPORTANT: Include /api at the end!
+VITE_API_URL=https://your-backend.onrender.com/api
 ```
 
 ### Deploy & Get URL

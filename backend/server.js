@@ -52,6 +52,38 @@ app.use(cors({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Root endpoint - API information
+app.get('/', (req, res) => {
+  res.json({
+    name: 'Crossword Stack API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      auth: {
+        login: 'POST /api/auth/login',
+        register: 'POST /api/auth/register',
+        logout: 'POST /api/auth/logout',
+        me: 'GET /api/auth/me'
+      },
+      puzzles: {
+        list: 'GET /api/puzzles',
+        myPuzzles: 'GET /api/puzzles/user/my',
+        getPuzzle: 'GET /api/puzzles/:id',
+        create: 'POST /api/puzzles',
+        update: 'PUT /api/puzzles/:id',
+        delete: 'DELETE /api/puzzles/:id'
+      },
+      scores: {
+        submit: 'POST /api/scores',
+        leaderboard: 'GET /api/scores/puzzle/:puzzleId',
+        userScores: 'GET /api/scores/puzzle/:puzzleId/user'
+      }
+    },
+    documentation: '/health for status check'
+  })
+})
+
 // Health check endpoint with database initialization
 app.get('/health', async (req, res) => {
   await ensureDatabase()

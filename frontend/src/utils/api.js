@@ -1,7 +1,11 @@
 // API layer for Crossword Stack
 
 // API Base URL - use environment variable for production, relative path for development
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+// IMPORTANT: VITE_API_URL should include /api path (e.g., https://backend.com/api)
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+
+// Ensure BASE_URL ends with /api for consistency
+const API_BASE_URL = BASE_URL.replace(/\/+$/, '')
 
 // Simulate API delay for backward compatibility with existing code
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
