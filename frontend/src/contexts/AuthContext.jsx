@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useToast } from '@/components/ui/use-toast'
+import { login as apiLogin, register as apiRegister, getCurrentUser } from '@/utils/api'
 
 const AuthContext = createContext(null)
 
@@ -58,17 +59,9 @@ export function AuthProvider({ children }) {
   // Login function
   const login = useCallback(async (emailOrUsername, password) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ emailOrUsername, password })
-      })
+      const data = await apiLogin(emailOrUsername, password)
 
-      const data = await response.json()
-
-      if (!response.ok) {
+      if (!data.success) {
         toast({
           variant: 'destructive',
           title: 'Login Failed',
@@ -100,17 +93,9 @@ export function AuthProvider({ children }) {
   // Register function
   const register = useCallback(async (email, username, password) => {
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, username, password })
-      })
+      const data = await apiRegister(email, username, password)
 
-      const data = await response.json()
-
-      if (!response.ok) {
+      if (!data.success) {
         toast({
           variant: 'destructive',
           title: 'Registration Failed',
@@ -157,14 +142,9 @@ export function AuthProvider({ children }) {
     if (!token) return
 
     try {
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const data = await getCurrentUser()
 
-      if (response.ok) {
-        const data = await response.json()
+      if (data.success) {
         setUser(data.data.user)
       } else {
         // Token is invalid, logout

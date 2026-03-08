@@ -4,6 +4,7 @@ import { ArrowLeft, Trophy, Clock, Lightbulb, Medal, Puzzle } from 'lucide-react
 import Button from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Badge from '@/components/ui/badge'
+import { getPuzzle, getLeaderboard } from '@/utils/api'
 
 export default function LeaderboardPage() {
   const { puzzleId } = useParams()
@@ -19,20 +20,13 @@ export default function LeaderboardPage() {
         setError(null)
 
         // Fetch puzzle and leaderboard data in parallel
-        const [puzzleResponse, scoresResponse] = await Promise.all([
-          fetch(`/api/puzzles/${puzzleId}`),
-          fetch(`/api/scores/puzzle/${puzzleId}`)
+        const [puzzleData, scoresData] = await Promise.all([
+          getPuzzle(puzzleId),
+          getLeaderboard(puzzleId)
         ])
 
-        if (!puzzleResponse.ok) {
-          throw new Error('Puzzle not found')
-        }
-
-        const puzzleData = await puzzleResponse.json()
-        const scoresData = await scoresResponse.json()
-
-        setPuzzle(puzzleData.data.puzzle)
-        setScores(scoresData.data.scores || [])
+        setPuzzle(puzzleData)
+        setScores(scoresData)
       } catch (err) {
         console.error('Load error:', err)
         setError(err.message)

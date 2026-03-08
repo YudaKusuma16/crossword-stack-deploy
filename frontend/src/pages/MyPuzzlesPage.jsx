@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import Button from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { Plus, Trash2, Edit, Play, FileText } from 'lucide-react'
+import { getMyPuzzles, deletePuzzle } from '@/utils/api'
 import {
   Dialog,
   DialogContent,
@@ -28,21 +29,8 @@ export default function MyPuzzlesPage() {
 
   const fetchPuzzles = async () => {
     try {
-      const response = await fetch('/api/puzzles/user/my', {
-        headers: getAuthHeaders()
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setPuzzles(data.data.puzzles)
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: data.message || 'Failed to load puzzles'
-        })
-      }
+      const puzzles = await getMyPuzzles()
+      setPuzzles(puzzles)
     } catch (error) {
       console.error('Fetch puzzles error:', error)
       toast({
@@ -59,32 +47,18 @@ export default function MyPuzzlesPage() {
     const { puzzleId } = deleteDialog
 
     try {
-      const response = await fetch(`/api/puzzles/${puzzleId}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
+      await deletePuzzle(puzzleId)
+      setPuzzles(puzzles.filter(p => p.id !== puzzleId))
+      toast({
+        title: 'Success',
+        description: 'Puzzle deleted successfully'
       })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setPuzzles(puzzles.filter(p => p.id !== puzzleId))
-        toast({
-          title: 'Success',
-          description: 'Puzzle deleted successfully'
-        })
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: data.message || 'Failed to delete puzzle'
-        })
-      }
     } catch (error) {
       console.error('Delete puzzle error:', error)
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to connect to server'
+        description: error.message || 'Failed to delete puzzle'
       })
     } finally {
       setDeleteDialog({ open: false, puzzleId: null })
