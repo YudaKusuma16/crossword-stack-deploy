@@ -2,9 +2,10 @@
 
 // API Base URL - use environment variable for production, relative path for development
 // IMPORTANT: VITE_API_URL should include /api path (e.g., https://backend.com/api)
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
-console.log('API URL:', BASE_URL)
-
+const BASE_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD
+    ? 'https://crossword-backend-nzj7.onrender.com/api'
+    : '/api')
 // Ensure BASE_URL ends with /api for consistency
 const API_BASE_URL = BASE_URL.replace(/\/+$/, '')
 
