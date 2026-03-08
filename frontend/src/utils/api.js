@@ -1,11 +1,13 @@
 // API layer for Crossword Stack
 
-// API Base URL - use environment variable for production, relative path for development
-// IMPORTANT: VITE_API_URL should include /api path (e.g., https://backend.com/api)
-const BASE_URL = import.meta.env.VITE_API_URL ||
-  (import.meta.env.PROD
-    ? 'https://crossword-backend-nzj7.onrender.com/api'
-    : '/api')
+// API Base URL - set VITE_API_URL in Vercel Dashboard (Settings → Environment Variables)
+// Local dev fallback: /api (requires vite proxy or local backend on port 3001)
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+
+if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+  console.error('[api.js] VITE_API_URL is not set. Set it in Vercel Dashboard → Environment Variables.')
+}
+
 // Ensure BASE_URL ends with /api for consistency
 const API_BASE_URL = BASE_URL.replace(/\/+$/, '')
 
