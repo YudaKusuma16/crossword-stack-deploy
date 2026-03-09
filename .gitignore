@@ -68,3 +68,5 @@ coverage/
 
 # Temporary server folder
 server/
+DEPLOYMENT.md
+DEPLOYMENT_QUICKSTART.md
